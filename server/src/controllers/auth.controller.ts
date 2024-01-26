@@ -50,8 +50,8 @@ const login = async (req: Request<unknown, unknown, UserLogin>, res: Response) =
 const refreshToken = async (req: Request, res: Response) => {
   const { refreshToken } = req.cookies
   if (!refreshToken) return res.status(403).json("Error::: You're not authenticated.")
-  const userId = decodeRefreshToken(refreshToken)
-  const data = await User.findById(userId)
+  const { id } = decodeRefreshToken(refreshToken)
+  const data = await User.findById(id)
   if (!data) return res.status(403).json("Error::: You're not authenticated.")
   const user: IUserJwt = {
     id: data.id,
@@ -61,7 +61,7 @@ const refreshToken = async (req: Request, res: Response) => {
 
   try {
     const newAccessToken = generateAccessToken(user)
-    const newRefreshToken = generateRefreshToken(userId)
+    const newRefreshToken = generateRefreshToken(user.id)
     res.clearCookie('refreshToken')
     res.cookie('refreshToken', newRefreshToken, {
       secure: false,

@@ -19,10 +19,10 @@ const decodeToken = <T = unknown>(token: string): T => {
   }
 }
 
-const decodeRefreshToken = (token: string): string => {
+const decodeRefreshToken = (token: string): { id: string } => {
   try {
     const payload = jwt.verify(token, env.jwtRefreshToken)
-    return payload as string
+    return payload as { id: string }
   } catch (error) {
     throw new Error("You're not authenticated")
   }
@@ -42,7 +42,9 @@ const generateAccessToken = (data: IUserJwt) => {
 const generateRefreshToken = (data: string) => {
   if (!data) throw new Error('Not found user')
   try {
-    return jwt.sign(data, env.jwtRefreshToken, {})
+    return jwt.sign({ id: data }, env.jwtRefreshToken, {
+      expiresIn: env.expRefreshToken
+    })
   } catch (error) {
     console.error(error)
   }
