@@ -15,7 +15,7 @@ const register = async (req: Request<unknown, unknown, UserRegister>, res: Respo
     user.save()
     return res.status(200).json({ username, email })
   } catch (error) {
-    console.error('Errorr::: Internal Server Error')
+    console.error('Error::: Internal Server Error')
     res.status(500).json(`${error}`)
   }
 }
@@ -25,9 +25,9 @@ const login = async (req: Request<unknown, unknown, UserLogin>, res: Response) =
   const user = await User.findOne({ username })
 
   try {
-    if (!user) throw new Error('Username or password invaild.')
+    if (!user) throw new Error('Username or password invalid.')
     const isMatch = await bcrypt.compare(password, user.password)
-    if (!isMatch) throw new Error('Username or password invaild.')
+    if (!isMatch) throw new Error('Username or password invalid.')
     const accessToken = generateAccessToken({ id: user.id, username, role: user.role })
     const refreshToken = generateRefreshToken(user.id)
     res.cookie('refreshToken', refreshToken, {
@@ -42,8 +42,8 @@ const login = async (req: Request<unknown, unknown, UserLogin>, res: Response) =
       accessToken
     })
   } catch (error) {
-    console.error('Errorr::: Internal Server Error')
-    res.status(500).json(`${error}`)
+    console.error('Error::: Internal Server Error')
+    res.status(500).json(error)
   }
 }
 
@@ -75,7 +75,7 @@ const refreshToken = async (req: Request, res: Response) => {
       accessToken: newAccessToken
     })
   } catch (error) {
-    console.error('Errorr::: Internal Server Error')
+    console.error('Error::: Internal Server Error')
     res.status(500).json(`${error}`)
   }
 }
